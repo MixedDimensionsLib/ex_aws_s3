@@ -757,9 +757,10 @@ defmodule ExAws.S3 do
     part_number :: pos_integer,
     body        :: binary,
     opts :: [encryption_opts | {:expect, binary}]) :: ExAws.Operation.S3.t
-  def upload_part(bucket, object, upload_id, part_number, body, _opts \\ []) do
+  def upload_part(bucket, object, upload_id, part_number, body, opts \\ []) do
     params = %{"uploadId" => upload_id, "partNumber" => part_number}
-    request(:put, bucket, object, params: params, body: body)
+    headers = Map.delete(put_object_headers(opts), "x-amz-acl")
+    request(:put, bucket, object, params: params, body: body, headers: headers)
   end
 
   @type upload_part_copy_opts :: [
